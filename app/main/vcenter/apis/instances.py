@@ -4,7 +4,17 @@ from flask_restful import Resource, reqparse
 from app.main.vcenter.control import instances as instance_manage
 
 parser = reqparse.RequestParser()
-parser.add_argument('id')
+parser.add_argument('platform_id')
+parser.add_argument('host')
+parser.add_argument('vm_name')
+parser.add_argument('action')
+parser.add_argument('uuid')
+ret_status = {
+    'ok': True,
+    'code': 200,
+    'msg': '创建成功',
+    'data': {}
+}
 
 
 class InstanceManage(Resource):
@@ -18,7 +28,7 @@ class InstanceManage(Resource):
           - in: query
             name: action
             type: string
-            description: '操作云主机 createvm startvm stopvm closevm restartvm'
+            description: '操作云主机 start stop suspend remove restart'
           - in: query
             name: vmname
             type: string
@@ -150,7 +160,18 @@ class InstanceManage(Resource):
                   items:
                     properties:
         """
-        pass
+        args = parser.parse_args()
+        print(args)
+        try:
+
+            if args['action'] in ['start', 'stop', 'suspend', 'restart']:
+                instance_manage.power_action(action=args['action'], platform_id=args['platform_id'], uuid=args['uuid'])
+                pass
+            else:
+                pass
+        except Exception as e:
+            print('raise ', e)
+        return "sss"
 
     # 获取 instance 列表
     def get(self):
@@ -169,7 +190,7 @@ class InstanceManage(Resource):
             type: string
             description: 平台id
           - in: query
-            name: vmname
+            name: vm_name
             type: string
             description: vmOcName
         responses:
@@ -259,26 +280,20 @@ class InstanceManage(Resource):
                     properties:
         """
         args = parser.parse_args()
-
-        # options ={
-        #     'host':args['host'],
-        #     'user': args['user'],
-        #     'port': args['port'],
-        #     'password': int(args['password']),
-        #     'disable_ssl_verification': True
-        # }
-        # options = {
-        #     'host': '192.168.12.205',
-        #     'port': 443,
-        #     'user': 'administrator@vsphere.local',
-        #     'password': 'Aiya@2018',
-        #     'disable_ssl_verification': True
-        # }
-        options = {
-            'id': args['id']
-        }
-        instance_manage.vm_list_all(options)
-        return 'testa'
+        try:
+            data = instance_manage.vm_list_all(platform_id=args['platform_id'], host=args['host'],
+                                               vm_name=args['vm_name'])
+            ret_status['ok'] = True
+            ret_status['code'] = 1111
+            ret_status['data'] = data
+            ret_status['msg'] = '查询成功'
+        except Exception as e:
+            ret_status['ok'] = False
+            ret_status['code'] = 1111
+            ret_status['data'] = {}
+            ret_status['msg'] = '查询失败'
+            return ret_status, 400
+        return ret_status
 
     def delete(self, id, vmname):
         """

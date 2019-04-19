@@ -26,6 +26,7 @@ def role_list_db(options=None):
 
         for results in results:
             role_tmp = {
+                'id': results.id,
                 'name': results.name,
                 'description': results.description,
             }

@@ -178,52 +178,36 @@ class EventLog(db.Model):
     task_request_id = db.Column(db.String, db.ForeignKey(TaskLog.task_id))  # 任务ID
 
 
-class Instance(db.Model):
-    __tablename__ = 'instances'
+class VCenterVm(db.Model):
+    __tablename__ = 'vcenter_instance'
+
     id = db.Column(db.Integer, primary_key=True)
-    int_id = db.Column(db.String(40), unique=True, nullable=False)
-    group_id = db.Column(db.String(10), nullable=False, index=True)
-    pool_id = db.Column(db.String(40), nullable=False, index=True)
+    platform_id = db.Column(db.Integer, nullable=False)                         # 所属于平台
+    vm_name = db.Column(db.String(255), nullable=False)                          # 云主机名称
+    vm_mor_name = db.Column(db.String(255), nullable=False)
+    template = db.Column(db.Boolean, nullable=False)
+    vm_path_name = db.Column(db.String(255), nullable=False)
+    memory = db.Column(db.String(40), nullable=False)                           # 内存
+    # memory_used = db.Column(db.String(40), nullable=False)                      # 已使用内存
+    cpu = db.Column(db.String(40), nullable=False)                              # 总cpu
+    # cpu_used = db.Column(db.String(40), nullable=False)                         # 已使用cpu
+    num_ethernet_cards = db.Column(db.Integer, nullable=False)
+    num_virtual_disks = db.Column(db.Integer, nullable=False)
     uuid = db.Column(db.String(40), nullable=False)
-    sid = db.Column(db.String(30), nullable=False)
-    ip = db.Column(db.String(20), nullable=False)
-    vip = db.Column(db.String(20), nullable=False)
-    port = db.Column(db.SmallInteger, nullable=False)
-    domain = db.Column(db.String(100), nullable=False, index=True)
-    role = db.Column(db.SmallInteger, nullable=False)
-    dbtype = db.Column(db.String(10), nullable=False)
-    maxmemory = db.Column(db.String(32), nullable=False)
-    intcode = db.Column(db.String(100), nullable=False)
-    create_time = db.Column(db.TIMESTAMP, nullable=False, default=0)
-    down_time = db.Column(
-        db.TIMESTAMP,
-        nullable=False,
-        default='0000-00-00 00:00:00'
-    )
-    status = db.Column(db.SmallInteger, nullable=False)
-    version = db.Column(db.String(30), nullable=False)
-    ins_usage = db.Column(db.String(120), nullable=False)
-    proj_name = db.Column(db.String(20), nullable=False, default='')
-    backup_flag = db.Column(db.SmallInteger, nullable=False, default=0)
-    slow_flag = db.Column(db.SmallInteger, nullable=False, default=0)
-    injection_flag = db.Column(db.SmallInteger, nullable=False, default=0)
-    protect = db.Column(db.SmallInteger, nullable=False, default=0)
-    sleep_prec = db.Column(db.SmallInteger, nullable=False, default=0)
-    service_ip = db.Column(db.String(20), nullable=False, default='')
-    offline_desc = db.Column(db.String(255), nullable=False, default='')
-
-    def __repr__(self):
-        return '<Instance %r>' % self.int_id
-
-    def __unicode__(self):
-        return self.int_id
+    instance_uuid = db.Column(db.String(40), nullable=False)
+    guest_id = db.Column(db.String(255), nullable=False)                   # 镜像id
+    guest_full_name = db.Column(db.String(255), nullable=False)
+    host = db.Column(db.String(40), nullable=False)                             # 所属HOST
+    ip = db.Column(db.String(20))                                               # ip
+    status = db.Column(db.String(40))
 
 
 class UsersInstances(db.Model):
     __tablename__ = 'user_insnstance'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    int_id = db.Column(db.String(40), nullable=False)
+    vm_id = db.Column(db.String(40), nullable=False)
+    platform_id = db.Column(db.Integer, nullable=False)
 
     # user = db.relationship('User', uselist=False, backref=db.backref('intids', lazy='dynamic'))
     # intid = db.relationship('Instance', uselist=False, backref=db.backref('intids', lazy='dynamic'))

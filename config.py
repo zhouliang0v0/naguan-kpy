@@ -16,10 +16,10 @@ class BaseConfig(object):
     SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
     SECRET_KEY = 'cccxdfcccc'
     SESSION_TYPE = 'redis'
-    SESSION_REDIS = redis.Redis(host='167.88.124.144', port='6379', password='123456')
+    SESSION_REDIS = redis.Redis(host='118.24.10.85', port='6379', password='123456')
     SESSION_KEY_PREFIX = 'flask'
 
-    SQLALCHEMY_RECORD_QUERIES =True
+    SQLALCHEMY_RECORD_QUERIES = True
 
     LOG_PATH = os.path.join(BASE_DIR, 'app\\static\\logs')
     LOG_PATH_ERROR = os.path.join(LOG_PATH, 'error.log')

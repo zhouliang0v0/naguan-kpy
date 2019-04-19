@@ -26,7 +26,7 @@ def create_app(config_name):
     # SystemConfig.query.first()
     # if system_config:
     #     print(system_config.copyright)
-    # Session(app)
+    Session(app)
     init_ext(app)
     restful_init(app)
     swagger_init(app)

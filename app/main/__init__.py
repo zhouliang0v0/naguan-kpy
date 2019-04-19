@@ -17,6 +17,8 @@ from app.main.base.apis.event_logs import LogEvent
 from app.main.base.apis.request_logs import LogRequest
 from app.main.base.apis.task_logs import LogTask
 
+from app.main.base.apis.role import RoleManage
+
 from flask_restful import Api
 from flasgger import Swagger
 
@@ -68,7 +70,11 @@ api.add_resource(PlatformTypeMg, '/api/v1.0/platform_type/', methods=['GET', 'PO
 api.add_resource(PlatformTypeMg, '/api/v1.0/platform_type/<id>', methods=['PUT', 'DELETE'], endpoint='PfTypeMgById')
 
 # vCenter 信息同步
-api.add_resource(VCenterManage, '/api/v1.0/vCenter/tree/',  methods=['GET', 'POST', 'PUT', 'DELETE'], endpoint='TreeMg')
+api.add_resource(VCenterManage, '/api/v1.0/vCenter/tree/',  methods=['GET', 'POST'], endpoint='TreeMg')
 api.add_resource(InstanceManage, '/api/v1.0/vm/',  methods=['GET', 'POST', 'PUT', 'DELETE'],  endpoint='VmMg')
 api.add_resource(ImageManage, '/api/v1.0/image/',  methods=['GET', 'POST', 'PUT', 'DELETE'],  endpoint='ImageMg')
+
+# 角色管理
+api.add_resource(RoleManage, '/api/v1.0/role/', methods=['GET', 'POST'], endpoint='RoleManage')
+api.add_resource(RoleManage, '/api/v1.0/role/<int:id>', methods=['DELETE', 'PUT'], endpoint='RoleManageById')
 
