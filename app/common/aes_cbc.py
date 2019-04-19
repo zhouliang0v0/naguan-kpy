@@ -8,6 +8,7 @@ current_config = os.getenv('FLASK_CONFIG') or 'default'
 config_dict = config[current_config]
 sso_server = config_dict.SSO
 
+
 class CBC(object):
     """密钥生成器"""
 
@@ -16,6 +17,7 @@ class CBC(object):
         self.key = key or sso_server["AES_CBC_KEY"]
         self.mode = AES.MODE_CBC
         # self.mode ='cc'
+
     def encrypt(self, text):
         # 加密函数，如果text不是16的倍数【加密文本text必须为16的倍数！】，那就补足为16的倍数
         cryptor = AES.new(self.key, self.mode, self.key)

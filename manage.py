@@ -2,11 +2,14 @@
 
 from flask_migrate import MigrateCommand
 from flask_script import Manager
-from app.main.base.auth import basic_auth
-from app import create_app
-from flask import g
+from app import create_app, db
+from flask import g, request, current_app
+from app.models import RequestLog
+
 import json
 import os
+import datetime
+import uuid
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
@@ -20,17 +23,43 @@ def first_request():
 
 
 @app.before_request
-def test():
+def before_request_info():
+    base_url = request.base_url
+    method = request.method
+    g.ip = request.remote_addr
+    g.url = method + '/' + base_url
+    g.time = datetime.datetime.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
     g.username = ''
 
+    g.request_id = str(uuid.uuid5(uuid.uuid4(), 'kaopuyun'))
+
+    g.log_d = {
+        'ip': g.ip,
+        'url': g.url,
+        'time': g.time,
+        'username': g.username,
+        'request_id': g.request_id,
+    }
 
 
 @app.after_request
-def after_request(response):
+def teardown_request(res):
+    try:
+        request_log = RequestLog()
+        request_log.request_id = g.request_id
+        request_log.ip = g.ip
+        request_log.url = g.url
+        request_log.time = g.time
+        request_log.submitter = g.username
+        request_log.status_num = res.status_code
+        g.log_d['status_code'] = res.status_code
+        current_app.logger.info(g.log_d)
+        db.session.add(request_log)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+    return res
 
-    print('g.user:', g.username)
-
-    return response
 
 # @app.after_request
 # def after_request():

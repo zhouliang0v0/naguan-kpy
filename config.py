@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 from os import getenv
+import redis
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, 'app\\static\\img\\')
@@ -14,6 +15,18 @@ class BaseConfig(object):
     SECURITY_PASSWORD_SALT = 'xxxxxxxxxxxxxxxxxxxxx'
     SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
     SECRET_KEY = 'cccxdfcccc'
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = redis.Redis(host='167.88.124.144', port='6379', password='123456')
+    SESSION_KEY_PREFIX = 'flask'
+
+    SQLALCHEMY_RECORD_QUERIES =True
+
+    LOG_PATH = os.path.join(BASE_DIR, 'app\\static\\logs')
+    LOG_PATH_ERROR = os.path.join(LOG_PATH, 'error.log')
+    LOG_PATH_INFO = os.path.join(LOG_PATH, 'info.log')
+    LOG_FILE_MAX_BYTES = 100 * 1024 * 1024
+    # 轮转数量是 10 个
+    LOG_FILE_BACKUP_COUNT = 10
     # LDAP = {
     #     'URI': 'ldap://10.5.17.25/',
     #     'BIND_DN': 'cn=%(username)s,ou=17173_users,dc=17173-family,dc=com',  # Bind directly to this base DN.
@@ -49,10 +62,10 @@ class BaseConfig(object):
 
         # SSO中注册的应用名
 
-        "app_id": getenv("sso_app_id", "3192273595163005550ef8bb402669fb"),
+        "app_id": getenv("sso_app_id", "2934880e56ad75758ee8e8151d1e4ded"),
         # SSO中注册返回的`app_id`
 
-        "app_secret": getenv("sso_app_secret", "GNSDEOLFG4ZWINJVMQ2DIYJRGM4WKMJUMI2D"),
+        "app_secret": getenv("sso_app_secret", "GIZTOMBTMRRGCMRVMIZDINZUMU4GMY3EGY3G"),
         # SSO中注册返回的`app_secret`
 
         "sso_server": getenv("sso_server", "http://sso.kaopuvm.com/"),

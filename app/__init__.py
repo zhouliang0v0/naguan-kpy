@@ -1,16 +1,15 @@
 # -*- coding:utf-8 -*-
-
-from flask import Flask, jsonify,g
+from flask import Flask, jsonify
 from app.models import Role, User, SystemConfig
-from flask_security import Security, SQLAlchemyUserDatastore, \
-    current_user
+from flask_security import Security, SQLAlchemyUserDatastore
 
-from app.main.base.auth import basic_auth
+from app.main.base.apis.auth import basic_auth
 from app.exts import db
 from config import config
 from app.exts import init_ext
 from app.main import restful_init
 from app.main import swagger_init
+from flask_session import Session
 
 
 def create_app(config_name):
@@ -27,7 +26,7 @@ def create_app(config_name):
     # SystemConfig.query.first()
     # if system_config:
     #     print(system_config.copyright)
-
+    # Session(app)
     init_ext(app)
     restful_init(app)
     swagger_init(app)
@@ -48,6 +47,5 @@ def create_app(config_name):
             'data': 'hhhhh'
         }
         return jsonify(data)
-
 
     return app
