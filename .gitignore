@@ -53,7 +53,7 @@ coverage.xml
 docs/_build/
 
 # pyCharm 
-.idea
+#.idea
 
 # OS X
 .DS_Store
