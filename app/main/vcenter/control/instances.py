@@ -89,3 +89,29 @@ def power_action(action, platform_id, uuid):
     elif action == 'restart':
         task = vm.ResetVM_Task()
         wait_for_tasks(s, [task])
+
+
+def vm_delete(platform_id, uuid):
+    s, content, platfrom = get_connect(platform_id)
+
+    # print(platform_id,uuid)
+    local_vm = db_vm.vm_list_by_uuid(platfrom['id'], uuid)
+    vm_mor_name = local_vm.vm_mor_name
+    vm = get_obj(content, [vim.VirtualMachine], vm_mor_name)
+
+    # print("The current powerState is: {0}".format(vm.runtime.powerState))
+    # print("Attempting to power off {0}".format(vm.name))
+    # task = vm.PowerOff()
+    # wait_for_tasks(s, [task])
+
+    # print("{0}".format(task.info.state))
+    # print("The current powerState is: {0}".format(vm.runtime.powerState))
+    # print("Destroying VM from vSphere.")
+
+    # task = vm.Destroy_Task()
+    # print(dir(vm))
+    task = vm.Destroy()
+    wait_for_tasks(s, [task])
+    print("Done.")
+    # 从数据库中删除云主机及 user_instance
+    # pass

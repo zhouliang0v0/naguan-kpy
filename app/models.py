@@ -11,16 +11,25 @@ from config import config
 import os
 import datetime
 
-roles_users = db.Table('roles_users',
-                       db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-                       db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+# roles_users = db.Table('roles_users',
+#                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+#                        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
 
-class Role(db.Model, RoleMixin):
+class RolesUsers(db.Model):
+    __tablename__ = 'roles_users'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('role.id'))
+
+
+class Roles(db.Model, RoleMixin):
     __tablename__ = 'role'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
+
+    roleUsers = db.relationship('RolesUsers', backref="role", lazy="dynamic")
 
     def __str__(self):
         return self.name
@@ -30,7 +39,7 @@ class Role(db.Model, RoleMixin):
 
 
 # User class
-class User(db.Model, UserMixin):
+class Users(db.Model, UserMixin):
     # Our User has six fields: ID, email, password, active, confirmed_at and roles. The roles field represents a
     # many-to-many relationship using the roles_users table. Each user may have no role, one role, or multiple roles.
     __tablename__ = 'user'
@@ -64,10 +73,32 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer, nullable=False)  # 登录次数
 
     roles = db.relationship(
-        'Role',
-        secondary=roles_users,
+        'Roles',
+        secondary='roles_users',
+        lazy="dynamic",
         backref=db.backref('users', lazy='dynamic')
     )
+
+    # goods = db.relationship(
+    #     'Goods',
+    #     secondary='users_goods',
+    #     lazy="dynamic",
+    #     backref=db.backref(
+    #         "users",
+    #         lazy='dynamic')
+    # )
+
+    rolesUser = db.relationship('RolesUsers', backref="user", lazy="dynamic")
+
+    # goods = db.relationship(
+    #     'Goods',
+    #     secondary='users_goods',
+    #     lazy="dynamic",
+    #     backref=db.backref(
+    #         "users",
+    #         lazy='dynamic')
+    # )
+
 
     def hash_password(self, password):
         self.password = pwd_context.encrypt(password)

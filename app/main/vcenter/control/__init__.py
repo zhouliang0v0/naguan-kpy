@@ -7,11 +7,12 @@ def get_mor_name(obj):
     obj_mor = obj_info.replace("'", "").split(':', 1)[1]
     return obj_mor
 
-def wait_for_tasks(service_instance, tasks):
+
+def wait_for_tasks(s, tasks):
     """Given the service instance si and tasks, it returns after all the
    tasks are complete
    """
-    property_collector = service_instance.content.propertyCollector
+    property_collector = s.content.propertyCollector
     task_list = [str(task) for task in tasks]
     # Create filter
     obj_specs = [vmodl.query.PropertyCollector.ObjectSpec(obj=task)

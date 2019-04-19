@@ -18,7 +18,7 @@ from app.main.base.apis.request_logs import LogRequest
 from app.main.base.apis.task_logs import LogTask
 
 from app.main.base.apis.role import RoleManage
-
+from app.main.base.apis.roles_users import RolesUsersManage
 from flask_restful import Api
 from flasgger import Swagger
 
@@ -54,7 +54,7 @@ api.add_resource(LogRequest, '/api/v1.0/log/request/', methods=['GET'], endpoint
 api.add_resource(LogRequest, '/api/v1.0/log/request/<int:id>', methods=['DELETE'], endpoint='LogRequestById')
 
 # 事件日志
-api.add_resource(LogEvent, '/api/v1.0/log/event/',  methods=['GET'], endpoint='LogEvent')
+api.add_resource(LogEvent, '/api/v1.0/log/event/', methods=['GET'], endpoint='LogEvent')
 api.add_resource(LogEvent, '/api/v1.0/log/event/<int:id>', methods=['DELETE'], endpoint='LogEventById')
 
 # 任务日志
@@ -70,11 +70,14 @@ api.add_resource(PlatformTypeMg, '/api/v1.0/platform_type/', methods=['GET', 'PO
 api.add_resource(PlatformTypeMg, '/api/v1.0/platform_type/<id>', methods=['PUT', 'DELETE'], endpoint='PfTypeMgById')
 
 # vCenter 信息同步
-api.add_resource(VCenterManage, '/api/v1.0/vCenter/tree/',  methods=['GET', 'POST'], endpoint='TreeMg')
-api.add_resource(InstanceManage, '/api/v1.0/vm/',  methods=['GET', 'POST', 'PUT', 'DELETE'],  endpoint='VmMg')
-api.add_resource(ImageManage, '/api/v1.0/image/',  methods=['GET', 'POST', 'PUT', 'DELETE'],  endpoint='ImageMg')
+api.add_resource(VCenterManage, '/api/v1.0/vCenter/tree/', methods=['GET', 'POST'], endpoint='TreeMg')
+api.add_resource(InstanceManage, '/api/v1.0/vm/', methods=['GET', 'POST', 'PUT', 'DELETE'], endpoint='VmMg')
+api.add_resource(InstanceManage, '/api/v1.0/vm/<int:id>/<string:uuid>', methods=['DELETE'], endpoint='VmMgDel')
+api.add_resource(ImageManage, '/api/v1.0/image/', methods=['GET', 'POST', 'PUT', 'DELETE'], endpoint='ImageMg')
 
 # 角色管理
 api.add_resource(RoleManage, '/api/v1.0/role/', methods=['GET', 'POST'], endpoint='RoleManage')
 api.add_resource(RoleManage, '/api/v1.0/role/<int:id>', methods=['DELETE', 'PUT'], endpoint='RoleManageById')
 
+# 用户角色管理
+api.add_resource(RolesUsersManage, '/api/v1.0/role_user/', methods=['GET', 'POST', 'PUT', 'DELETE'], endpoint='RoleUserMg')

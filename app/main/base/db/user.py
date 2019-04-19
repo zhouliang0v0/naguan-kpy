@@ -1,22 +1,22 @@
 # -*- coding:utf-8 -*-
-from app.models import User
+from app.models import Users
 from app.exts import db
 
 
 # 根据条件获取用户信息
 def user_list(options=None):
-    query = db.session.query(User)
+    query = db.session.query(Users)
 
-    if options['id']:
-        query = query.filter_by(id=options['id'])
-    if options['email']:
-        query = query.filter_by(email=options['email'])
-    if options['mobile']:
-        query = query.filter_by(mobile=options['mobile'])
-    if options['remarks']:
-        query = query.filter_by(remarks=options['remarks'])
-    if options['limit'] and options['next_page']:
-        query = query.paginate(page=options['next_page'], per_page=options['limit'], error_out=False)
+    if options.get('id'):
+        query = query.filter_by(id=options.get('id'))
+    if options.get('email'):
+        query = query.filter_by(email=options.get('email'))
+    if options.get('mobile'):
+        query = query.filter_by(mobile=options.get('mobile'))
+    if options.get('remarks'):
+        query = query.filter_by(remarks=options.get('remarks'))
+    if options.get('limit') and options.get('next_page'):
+        query = query.paginate(page=options.get('next_page'), per_page=options.get('limit'), error_out=False)
     # print(query)
     result = query.items
 
@@ -63,7 +63,7 @@ def user_list(options=None):
 def user_list_by_name(username):
     # print('username:', username)
     if username:
-        data = db.session.query(User).filter_by(username=username).all()
+        data = db.session.query(Users).filter_by(username=username).all()
         # print(data)
         return data
     else:
@@ -74,18 +74,18 @@ def user_list_by_name(username):
 def user_list_by_email(email):
     # if email:
 
-    return db.session.query(User).filter_by(email=email).all()
+    return db.session.query(Users).filter_by(email=email).all()
 
 
 # 根据id获取用户信息
 def user_list_by_id(id):
-    return db.session.query(User).filter_by(id=id).all()
+    return db.session.query(Users).filter_by(id=id).first()
 
 
 # 创建用户信息
 def user_create(options=None):
-    query = db.session.query(User)
-    newuser = User()
+    query = db.session.query(Users)
+    newuser = Users()
     newuser.username = options['username']
     # newuser.password = args['password']
     newuser.hash_password(options['password'])
@@ -117,7 +117,7 @@ def user_create(options=None):
 
 # 根据id删除用户信息
 def user_delete(id=None):
-    query = db.session.query(User)
+    query = db.session.query(Users)
     user_willdel = query.filter_by(id=id).first()
     db.session.delete(user_willdel)
     db.session.commit()
@@ -126,7 +126,7 @@ def user_delete(id=None):
 
 # 根据id更新用户信息
 def user_update(id, options):
-    user = db.session.query(User).filter_by(id=id).first()
+    user = db.session.query(Users).filter_by(id=id).first()
     # 判断是否更新状态
     # print(options)
     if options['active']:
@@ -141,7 +141,7 @@ def user_update(id, options):
 
     # 判断是否更新密码
     if options['password']:
-        user.password = User.get_hash_password(options['password'])
+        user.password = Users.get_hash_password(options['password'])
     if options['username']:
         user.username = options['username']
     if options['mobile']:
@@ -155,3 +155,4 @@ def user_update(id, options):
 
     db.session.commit()
     return True
+

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 91e80a6054e4
+Revision ID: 7ef9bacb2485
 Revises: 
-Create Date: 2019-04-17 10:15:08.893000
+Create Date: 2019-04-19 14:55:48.299000
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '91e80a6054e4'
+revision = '7ef9bacb2485'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -128,6 +128,26 @@ def upgrade():
     sa.Column('platform_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('vcenter_instance',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('platform_id', sa.Integer(), nullable=False),
+    sa.Column('vm_name', sa.String(length=255), nullable=False),
+    sa.Column('vm_mor_name', sa.String(length=255), nullable=False),
+    sa.Column('template', sa.Boolean(), nullable=False),
+    sa.Column('vm_path_name', sa.String(length=255), nullable=False),
+    sa.Column('memory', sa.String(length=40), nullable=False),
+    sa.Column('cpu', sa.String(length=40), nullable=False),
+    sa.Column('num_ethernet_cards', sa.Integer(), nullable=False),
+    sa.Column('num_virtual_disks', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(length=40), nullable=False),
+    sa.Column('instance_uuid', sa.String(length=40), nullable=False),
+    sa.Column('guest_id', sa.String(length=255), nullable=False),
+    sa.Column('guest_full_name', sa.String(length=255), nullable=False),
+    sa.Column('host', sa.String(length=40), nullable=False),
+    sa.Column('ip', sa.String(length=20), nullable=True),
+    sa.Column('status', sa.String(length=40), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('vcenter_tree',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('type', sa.Integer(), nullable=False),
@@ -157,10 +177,12 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('roles_users',
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('role_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], )
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 
@@ -170,6 +192,7 @@ def downgrade():
     op.drop_table('roles_users')
     op.drop_table('event_log')
     op.drop_table('vcenter_tree')
+    op.drop_table('vcenter_instance')
     op.drop_table('user_insnstance')
     op.drop_table('user')
     op.drop_table('task_log')

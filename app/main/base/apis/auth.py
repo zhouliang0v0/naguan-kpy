@@ -5,7 +5,7 @@ from flask_security import login_required, login_user, roles_accepted
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 from flask_restful import Resource, reqparse
 from flask_httpauth import HTTPBasicAuth
-from app.models import User
+from app.models import Users
 from config import config
 from flask_ldap3_login import LDAP3LoginManager
 from app.common.aes_cbc import CBC
@@ -132,9 +132,9 @@ class AuthManage(Resource):
                                             secure=False if request.url_root.split("://")[0] == "http" else True)
                         # 更新passport的uid到本地
                         if userinfo.get('identifier'):
-                            user = User.query.filter_by(username=userinfo['identifier']).first()
+                            user = Users.query.filter_by(username=userinfo['identifier']).first()
                             if user is None:
-                                user = User(uid=uid, username=userinfo['identifier'])
+                                user = Users(uid=uid, username=userinfo['identifier'])
                                 # db.session.add(user)
                                 # User.create(uid=uid, username=userinfo['identifier'])
                             else:
@@ -228,7 +228,7 @@ def verify_password(username_or_token, password):
         else:
             print('unable get session')
 
-        data, token_flag = User.verify_auth_token(username_or_token)
+        data, token_flag = Users.verify_auth_token(username_or_token)
         # data, token_flag = parse_token(username_or_token)
         if token_flag == 1:  # 认证成功
             print('verify success')
@@ -246,7 +246,7 @@ def verify_password(username_or_token, password):
         elif token_flag == 3:  # token 解析失败
             return False
     else:
-        user = User.query.filter_by(username=username_or_token).first()
+        user = Users.query.filter_by(username=username_or_token).first()
         # g.user_name = username_or_token
         # print(user)
         # print('g.user')

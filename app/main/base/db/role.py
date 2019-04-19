@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
-from app import Role
+from app.models import Roles
 from app.exts import db
 
 
 # 查找是否存在角色
 def role_exist(name=None):
-    query = db.session.query(Role)
+    query = db.session.query(Roles)
     query = query.filter_by(name=name).first()
     if query:
         return True
@@ -15,7 +15,7 @@ def role_exist(name=None):
 
 # 角色列表
 def role_list_db(options=None):
-    query = db.session.query(Role)
+    query = db.session.query(Roles)
     if options['name']:  # 如果存在name，搜索符合name的数据
         query = query.filter_by(name=options['name'])
     if options['pgnum']:  # 默认获取分页获取所有日志,
@@ -52,7 +52,7 @@ def role_create_db(options=None):
         if res:
             return False
         else:
-            role = Role()
+            role = Roles()
             role.name = options['name']
             role.description = options['description']
             db.session.add(role)
@@ -62,9 +62,9 @@ def role_create_db(options=None):
 
 # 更新角色信息
 def role_update_db(options=None):
-    role = Role.query.get(options['id'])
+    role = Roles.query.get(options['id'])
     if role:
-        role_re = Role.query.filter_by(name=options['name']).first()
+        role_re = Roles.query.filter_by(name=options['name']).first()
         if role_re and role != role_re:
             return False
         else:
@@ -79,7 +79,7 @@ def role_update_db(options=None):
 
 # 删除角色信息
 def role_delete_db(id=None):
-    role = Role.query.get(id)
+    role = Roles.query.get(id)
     if role:
         name = role.name
         db.session.delete(role)
@@ -87,3 +87,8 @@ def role_delete_db(id=None):
         return name
     else:
         return False
+
+
+def list_by_id(role_id):
+    data = db.session.query(Roles).filter(Roles.id == role_id).first()
+    return data

@@ -1,5 +1,8 @@
 # -*- coding:utf-8 -*-
 from flask_restful import Resource, reqparse
+
+from app.common.my_exceptions import ExistsException
+from app.common.tool import set_return_val
 from app.main.base.control import user as user_manage
 from flask import g
 
@@ -163,78 +166,55 @@ class UserManage(Resource):
                  description: The name of the user
                  default: Steven Wilson
         """
-        args = parser.parse_args()
+        try:
+            args = parser.parse_args()
 
-        # 验证性别合法性
-        # if int(args['sex']) not in [1, 2]:
-        #     ret_status['code'] = 1104
-        #     ret_status['msg'] = '性别信息不对，请传入正确参数，1为男性，2为女性'
-        #     ret_status['ok'] = False
-        #     return ret_status
+            if not all([args['username'], args['password'], args['email'], args['department'], args['company']]):
+                raise Exception('Parameter error.')
+            # 验证 active 合法性
+            if not args['active']:
+                active = 1
+            else:
+                active = 1
 
-        # 验证 active 合法性
-        if not args['active']:
-            # ret_status['code'] = 1104
-            # ret_status['msg'] = '请传入acitve信息，1为True，2为False'
-            # ret_status['ok'] = False
-            # return ret_status
-            active = 1
-        else:
-            active = 1
+            # 验证 is_superuser 合法性
+            if not args['is_superuser']:
 
-        # 验证 is_superuser 合法性
-        if not args['is_superuser']:
-            # ret_status['code'] = 1104
-            # ret_status['msg'] = '请传入is_superuser信息，1为True，2为False'
-            # ret_status['ok'] = False
-            # return ret_status
-            is_superuser = 1
-        else:
-            is_superuser = 1
-            # if int(args['is_superuser']) not in [1, 2]:
-            #     ret_status['code'] = 1104
-            #     ret_status['msg'] = 'is_superuser 信息不对，请传入正确参数，1为True，2为False'
-            #     ret_status['ok'] = False
-            #     return ret_status
+                is_superuser = 1
+            else:
+                is_superuser = 1
 
-        # 判断参数不为空
-        if args['username'] and args['password'] and args['email'] and args['department'] and args['company']:
-            pass
-        else:
-            ret_status['code'] = 1105
-            ret_status['msg'] = '参数信息不对，请传入正确参数'
-            ret_status['ok'] = False
-            return ret_status
+            options = {
+                'username': args['username'],
+                'password': args['password'],
+                'email': args['email'],
+                'first_name': args['first_name'],
+                'uid': 1,
+                'mobile': args['mobile'],
+                'department': args['department'],
+                'job': 'it',
+                'location': 'location',
+                'company': args['company'],
+                'sex': 1,
+                'uac': 'uac',
+                'active': active,
+                'is_superuser': is_superuser,
+                'remarks': args['remarks'],
+                'current_login_ip': g.ip
+            }
 
-        options = {
-            'username': args['username'],
-            'password': args['password'],
-            'email': args['email'],
-            'first_name': args['first_name'],
-            'uid': 1,
-            'mobile': args['mobile'],
-            'department': args['department'],
-            'job': 'it',
-            'location': 'location',
-            'company': args['company'],
-            'sex': 1,
-            'uac': 'uac',
-            'active': active,
-            'is_superuser': is_superuser,
-            'remarks': args['remarks'],
-            'current_login_ip': g.ip
-        }
-        # return 'ccc'
-        result = user_manage.user_create(options=options)
-        if result:
-            ret_status['code'] = 1100
-            ret_status['msg'] = '用户创建成功'
-            ret_status['ok'] = True
-        else:
-            ret_status['code'] = 1103
-            ret_status['msg'] = '用户信息已存在'
-            ret_status['ok'] = False
-        return ret_status
+            result = user_manage.user_create(options=options)
+            if not result:
+                raise ExistsException('user', options['username'])
+
+        # 已存在
+        except ExistsException as e:
+            return set_return_val(False, [], str(e), 1002), 400
+
+        except Exception as e:
+            return set_return_val(False, [], str(e), 1001), 400
+
+        return set_return_val(True, [], 'User created successfully', 1000)
 
     def put(self, id):
         """

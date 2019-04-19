@@ -171,7 +171,7 @@ class InstanceManage(Resource):
                 pass
         except Exception as e:
             print('raise ', e)
-        return "sss"
+        return "操作成功"
 
     # 获取 instance 列表
     def get(self):
@@ -295,7 +295,7 @@ class InstanceManage(Resource):
             return ret_status, 400
         return ret_status
 
-    def delete(self, id, vmname):
+    def delete(self, id, uuid):
         """
          操作 vm 信息
         ---
@@ -307,9 +307,9 @@ class InstanceManage(Resource):
             type: string
             description: platform_id
           - in: path
-            name: vmname
+            name: uuid
             type: string
-            description: vmmorname
+            description: uuid
         responses:
           200:
             description: vCenter tree 信息
@@ -348,8 +348,11 @@ class InstanceManage(Resource):
                   items:
                     properties:
         """
+        args = parser.parse_args()
+        data = instance_manage.vm_delete(platform_id=id,
+                                         uuid=uuid)
 
-        pass
+        return '删除成功'
 
     def put(self):
         """
